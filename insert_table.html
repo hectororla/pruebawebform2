@@ -1,0 +1,186 @@
+<html STYLE="width: 432px; height: 235px;">
+<head><title>Insert Table</title>
+<style>
+  html, body, button, div, input, select, td, { font-family: MS Shell Dlg; font-size: 10pt; };
+</style>
+<script>
+
+var strBackColor = "#FFFFFF";
+var strBorderColor = "#BCBCBC";
+
+function OnEsc() {
+  if (event.keyCode == 27) { window.close(); return; }
+}
+
+function Init() {
+  document.body.onkeypress = OnEsc;
+}
+
+function IsValidNumber(strValue) {
+  var nVal = parseInt(strValue);
+  if (isNaN(nVal) || nVal < 0 || nVal > 9999) { return false; }
+  return true;
+}
+
+function OnChangeBackColour()
+{
+	strBackColor = OnChangeColour(strBackColor);
+	document.all.backgroundcolor.value = strBackColor;
+}
+
+function OnChangeBorderColour()
+{
+	strBorderColor = OnChangeColour(strBorderColor);
+	document.all.bordercolor.value = strBorderColor;
+}
+
+function OnChangeColour(strOldColour)
+{
+	var strColor;
+//	if (strOldColour == null) 
+//		strColor = document.all.dlgHelper.ChooseColorDlg();
+//	else
+	strColor = document.all.dlgHelper.ChooseColorDlg(strOldColour);
+	
+	strColor = strColor.toString(16);
+	if (strColor.length < 6) {
+		var strTempString = "000000".substring(0,6-strColor.length);
+		strColor = strTempString.concat(strColor);
+	}
+	return "#"+strColor;
+}
+
+function OnInsert() {
+  var aCheckList = ['rows','cols','bordersize','cellspacing','cellpadding'];
+  for (var nIndex in aCheckList) {
+    var strFieldName = aCheckList[nIndex];
+    if (document.all[strFieldName].value == "") {
+      alert("You must specify a value for the '" +strFieldName+ "' field.");
+      document.all[strFieldName].focus();
+      return;
+    }
+    else if (!IsValidNumber(document.all[strFieldName].value)) {
+      alert("You must specify a number between 0 and 9999 for '" +strFieldName+ "'.");
+      document.all[strFieldName].focus();
+      return;
+    }
+  }
+
+  var strNewTable = '<table border="' +document.all.bordersize.value+ '"'
+			+ ' bordercolor="' +document.all.bordercolor.value+'"'
+			+ ' bgcolor="' +document.all.backgroundcolor.value+'"'
+            + ' cellspacing="' +document.all.cellspacing.value+ '"'
+            + ' cellpadding="' +document.all.cellpadding.value+ '"'
+            + ' align="' +document.all.alignment.value+ '"';
+  if (document.all.widthtype[0].checked)
+	 strNewTable += ' width="' +document.all.width.value +'%">\n';
+  else
+     strNewTable += ' width="' +document.all.width.value +'">\n';
+
+  for (var i=0; i<document.all.rows.value; i++) {
+    strNewTable += " <tr>\n";
+    for (var j=0; j<document.all.cols.value; j++) {
+      strNewTable += "  <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n";
+    }
+    strNewTable += " </tr>\n";
+  }
+  strNewTable += "</table>\n";
+  window.dialogArguments.win.goRichEditManager.InsertString(window.dialogArguments.ID,strNewTable);
+  window.close();
+}
+</SCRIPT>
+
+
+</HEAD>
+<BODY onload="Init()" style="background: threedface; color: windowtext; margin: 10px; BORDER-STYLE: none" scroll=no>
+<TABLE>
+    <TBODY>
+    <TR>
+        <TD>&nbsp;&nbsp;</TD>
+        <TD>Rows:</TD>
+        <TD colSpan="2">
+            <INPUT size="1" value="3" name="rows"> 
+        </TD>
+        <TD>&nbsp;&nbsp;</TD>
+        <TD>Columns:</TD>
+        <TD><INPUT size="1" value="3" name="cols"> </TD>
+    </TR>
+    <TR>
+        <TD>&nbsp;&nbsp;</TD>
+        <TD>Width: </TD>
+        <TD>
+            <INPUT size="1" value="" name="width">
+        </TD>
+        <TD>
+            <INPUT type="radio" CHECKED value="percent" name="widthtype">
+            % 
+        </TD>
+        <TD>&nbsp;&nbsp;</TD>
+        <TD>Alignment: </TD>
+        <TD>
+            <SELECT name="alignment">
+                <OPTION value="left" selected>Left</OPTION>
+                <OPTION value="center">Center</OPTION>
+                <OPTION value="right">Right</OPTION>
+            </SELECT>
+        </TD>
+    </TR>
+    <TR>
+        <TD>&nbsp;&nbsp;</TD>
+        <TD></TD>
+        <TD></TD>
+        <TD>
+            <INPUT type="radio" value="pixels" name="widthtype"> 
+                px 
+        </TD>
+        <TD>&nbsp;&nbsp;</TD>
+        <TD>Border size: </TD>
+        <TD>
+            <INPUT size="1" value="1" name="bordersize">
+        </TD>
+    </TR>
+    <TR>
+        <TD>&nbsp;&nbsp;</TD>
+        <TD>Background Color: </TD>
+        <TD colSpan="2">
+        <input type=text name="backgroundcolor" size="6" value="#FFFFFF"/>
+		<button onclick="OnChangeBackColour();">
+		<img src="Images/bg.gif" />
+		</button>
+        </TD>
+        <TD>&nbsp;&nbsp;</TD>
+        <TD>Cell padding: </TD>
+        <TD>
+            <INPUT size="1" value="0" name="cellpadding">
+        </TD>
+    </TR>
+    <TR>
+        <TD>&nbsp;&nbsp;</TD>
+        <TD>Border color: </TD>
+        <TD colSpan="2">
+        <input type=text name="bordercolor" size="6" value="#BCBCBC"/>
+		<button onclick="OnChangeBorderColour();">
+		<img src="Images/bg.gif" />
+        </TD>
+        <TD>&nbsp;&nbsp;</TD>
+        <TD>Cell spacing: </TD>
+        <TD>
+            <INPUT size="1" value="0" name="cellspacing">
+        </TD>
+    </TR>
+    <TR>
+        <TD align="right" colSpan="4">
+            <INPUT onclick="OnInsert();" type="button" value="&nbsp;&nbsp;Insert&nbsp;&nbsp;" name="Insert">
+        </TD>
+        <TD>&nbsp;&nbsp;</TD>
+        <TD colSpan="2">
+            <INPUT onclick="window.close();" type="button" value="Cancel" name="Cancel"> 
+        </TD>
+    </TR>
+    </TBODY>
+</TABLE>
+<div>
+<OBJECT id=dlgHelper CLASSID="clsid:3050f819-98b5-11cf-bb82-00aa00bdce0b" width="0px" height="0px" VIEWASTEXT></object>
+</div>
+</BODY>
+</HTML>

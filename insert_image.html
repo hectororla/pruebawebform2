@@ -1,0 +1,113 @@
+<HTML STYLE="width: 325px; height: 215px;">
+<HEAD>
+<TITLE>Insert Image</TITLE>
+<style>
+  html, body, button, div, input, select,tr,td, { font-family: MS Shell Dlg; font-size: 10pt; };
+</style>
+<SCRIPT>
+pbfiledir = "/pbopenfile.aspx?t=0&o=1&c="
+opener = window.dialogArguments;
+
+function OnEsc() {
+  if (event.keyCode == 27) { window.close(); return; }
+}
+
+function Init() {
+  document.body.onkeypress = OnEsc;
+}
+
+function OnInsert() {
+  var strImg = document.all.imgsrc.value;
+  if (!strImg || strImg == "http://") { 
+    alert("Image URL must be specified.");
+    imgsrc.focus();
+    return;
+  }
+
+  if (strImg.indexOf(":") != -1)
+  {
+	  strImg = window.dialogArguments.webappdir+pbfiledir + escape(strImg.replace('/','\\'))
+  }
+  else
+  {
+	  strImg = window.dialogArguments.webappdir+pbfiledir + escape(window.dialogArguments.currentdir+"\\")+escape(strImg.replace('/','\\'))
+  }
+var strNewImage = '<img src="' +strImg+ '"'
+	if (document.all.alttxt.value != "")
+		strNewImage	+= ' alt="' +document.all.alttxt.value+'"'
+	if (document.all.width.value != "")	
+		strNewImage	+= ' width="' +document.all.width.value+'"'
+	if (document.all.height.value != "")
+		strNewImage	+= ' height="' +document.all.height.value+'"'
+	if (document.all.bordersize.value != "")	
+		strNewImage	+= ' border="' +document.all.bordersize.value+'"'
+	if (document.all.horspace.value != "")
+		strNewImage	+= ' hspace="' +document.all.horspace.value+ '"'
+	if (document.all.verspace.value != "")	
+		strNewImage	+= ' vspace="' +document.all.verspace.value+ '"'
+	strNewImage	+= ' align="' +document.all.alignment.value+ '">';
+  
+  window.dialogArguments.win.goRichEditManager.InsertString(window.dialogArguments.ID,strNewImage);
+  window.close();
+}
+</SCRIPT>
+</HEAD>
+<BODY onload="Init()" style="background: threedface; color: windowtext;" scroll="no">
+<TABLE>
+    <TR>
+        <TD width="2"></TD>
+        <TD colSpan="4">
+            Images source: 
+            <INPUT size="20" name="imgsrc"> 
+        </TD>
+    </TR>
+    <TR>
+        <TD></TD>
+        <TD colSpan="4">
+            Alternative text: 
+            <INPUT size="20" name="alttxt"> 
+        </TD>
+    </TR>
+    <TR>
+        <TD></TD>
+        <TD>Height: </TD>
+        <TD><INPUT size="1" name="height"> </TD>
+        <TD>Horizontal space: </TD>
+        <TD><INPUT size="1" name="horspace"> </TD>
+    </TR>
+    <TR>
+        <TD></TD>
+        <TD>Width:</TD>
+        <TD><INPUT size="1" name="width"> </TD>
+        <TD>Vertical space: </TD>
+        <TD><INPUT size="1" name="verspace"> </TD>
+    </TR>
+    <TR>
+        <TD></TD>
+        <TD>Alignment: </TD>
+        <TD>
+            <SELECT name="alignment">
+                <OPTION value="left" selected>Left</OPTION>
+                <OPTION value="center">Center</OPTION>
+                <OPTION value="right">Right</OPTION>
+            </SELECT>
+        </TD>
+        <TD>Border size: </TD>
+        <TD><INPUT size="1" name="bordersize" value="0"> </TD>
+    </TR>
+    <TR>
+        <TD></TD>
+        <TD colSpan="4"></TD>
+    </TR>
+    <TR>
+        <TD></TD>
+        <TD colSpan="2" align="right">
+            <INPUT onclick="OnInsert();" type="button" value="&nbsp;&nbsp;Insert&nbsp;&nbsp;" NAME="Insert"> 
+        </TD>
+        <TD colSpan="2">
+            <INPUT onclick="window.close();" type="button" value="Cancel" NAME="Cancel"> 
+        </TD>
+    </TR>
+</TABLE>
+</BODY>
+</HTML>
